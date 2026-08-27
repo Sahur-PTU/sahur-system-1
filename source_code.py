@@ -1,4 +1,4 @@
-# sahur system - [1] / v-1.2 / 25.07.2026
+# sahur system - [1] / v-1.2 / 26.08.2026
 
 #    \____
 #   sa\____\
@@ -6,6 +6,7 @@
 #         \
 
 import os
+import sys
 import time 
 import datetime
 import subprocess
@@ -17,6 +18,12 @@ from colorama import init, Fore, Back, Style
 init()
 #os.system('mode con: cols=60 lines=17')
 
+parameters = {'system':"none", 'clearOutput':'none','runFile':'none'}
+def crossPlatform():
+  global parameters
+  if sys.platform == "win32": parameters = {'system': "win32", 'clearOutput': "cls", 'runFile': "os.startfile"}
+  if sys.platform == "darwin": parameters = {'system': "drawin", 'clearOutput':"clear",'runFile': "subprocess.run"}
+  if sys.platform == "xdg-open": parameters = {'system': "xdg-open", 'clearOutput':"clear", 'runFile': "subprocess.run"}
 
 programs = {
  'pr_1' : {'num':'1', 'par': 'none', 'name':'none', 'dir': 'none', 'delay':1},
@@ -27,6 +34,7 @@ programs = {
  'main_delay' : 1,
  'sessions' : {}
 }
+
 
 b_m = [None, None, None, None, None] 
 
@@ -46,18 +54,17 @@ def read() :
 
 def _exit() :
   print("закругляемся")
-  _read = read(), time.sleep(0.5)
   update_write = write()
   print(Fore.BLUE, " [ℹ]-System : stop ", Style.RESET_ALL), time.sleep(0.5)
   exit()
-
-print(Fore.GREEN+"sahur system - [1] / v-1.2 / 25.07.2026"+Style.RESET_ALL), time.sleep(1)
+"""
+print(Fore.GREEN+"sahur system - [1] / v-1.2 / 26.08.2026"+Style.RESET_ALL), time.sleep(1)
 print(Fore.BLUE,"[1]-System : Запуск \n"), time.sleep(0.5)
 print(" [2]-System : Проверка систем (1) "), time.sleep(0.3)
 print('  расположение:', os.getcwd()), time.sleep(0.3)
 print(" [3]-System : Проверка систем (2) \n"), time.sleep(1)
 os.system('cls') 
-
+"""
 print(Fore.MAGENTA,'')
 _read = read()
 if len(programs['sessions']) > 0: last_log = list(programs['sessions'].values())[-1]
@@ -65,17 +72,17 @@ else: last_log = "none"
 print("последняя сессия :", last_log)
 programs['sessions'][str(len(programs['sessions'])+1)] = str(datetime.datetime.now())[:-10]
 update_write = write()
-print("текущая сессия   :", str(datetime.datetime.now())[:-10]), time.sleep(2)
+print("текущая сессия   :", str(datetime.datetime.now())[:-10]), time.sleep(0.5)
 print(Fore.GREEN,'')
 
 
-#os.system('cls')
+#os.system(parameters['clearOutput'])
 
-print(programs['main_delay'])
+print('main_delay:', programs['main_delay'])
 print("Добро пожаловать!"), time.sleep(1)
 def menu():
   while True:
-    #os.system('cls')
+    #os.system(parameters['clearOutput'])
     # посчёт символов
     a1 = len(str(programs['pr_1']['num']+'. '+programs['pr_1']['name']))
     a2 = len(programs['pr_2']['num']+'. '+programs['pr_2']['name'])
@@ -109,57 +116,59 @@ def menu():
 
     def start():
         try:
-          print('Запуск'), time.sleep(1), os.system('cls')
+          print('Запуск'); time.sleep(1)
+          os.system(parameters['clearOutput'])
           if programs['pr_1']['name'] == 'none':
-            print('запуск (1) небудем это хапускать'), time.sleep(programs['pr_1']['delay'])
+            print('запуск (1) небудем это хапускать'); time.sleep(programs['pr_1']['delay'])
           else: 
             print("запуск (1)"), time.sleep(programs['pr_1']['delay'])
-            exec(programs['pr_1']['par']+'("'+programs['pr_1']['dir']+'")')
+            exec(programs['pr_1']['par']+'(["'+programs['pr_1']['dir']+'"])')
 
           if programs['pr_2']['name'] == 'none':
-            print('запуск (2) небудем это хапускать'), time.sleep(programs['pr_2']['delay'])
+            print('запуск (2) небудем это хапускать'); time.sleep(programs['pr_2']['delay'])
           else: 
             print("запуск (2)"), time.sleep(programs['pr_2']['delay'])
             exec(programs['pr_2']['par']+'("'+programs['pr_2']['dir']+'")')
             
           if programs['pr_3']['name'] == 'none':
-            print('запуск (3) небудем это хапускать'), time.sleep(programs['pr_3']['delay'])
+            print('запуск (3) небудем это хапускать'); time.sleep(programs['pr_3']['delay'])
           else: 
             print("запуск (3)"), time.sleep(programs['pr_3']['delay'])
             exec(programs['pr_3']['par']+'("'+programs['pr_3']['dir']+'")') # СДЕЛАТЬ ПОЛЬХОВАТЕЛЬСКУЮ НАСТРОЙКУ СКОРОСТИ ЗАПУСАКА
 
           if programs['pr_4']['name'] == 'none':
-            print('запуск (4) небудем это хапускать'), time.sleep(programs['pr_4']['delay'])
+            print('запуск (4) небудем это хапускать'); time.sleep(programs['pr_4']['delay'])
           else: 
             print("запуск (4)"), time.sleep(programs['pr_4']['delay'])
             exec(programs['pr_4']['par']+'("'+programs['pr_4']['dir']+'")')
 
           if programs['pr_5']['name'] == 'none':
-            print('запуск (5) небудем это хапускать'), time.sleep(programs['pr_5']['delay'])
+            print('запуск (5) небудем это хапускать'); time.sleep(programs['pr_5']['delay'])
           else: 
             print("запуск (5)"), time.sleep(programs['pr_5']['delay'])
             exec(programs['pr_5']['par']+'("'+programs['pr_5']['dir']+'")')
         
         except FileNotFoundError: print('Один из файлов не был найден')
         except KeyboardInterrupt: 
-          print("Искусcтвенная остановка запуска"), time.sleep(0.5)
+          print("Искусcтвенная остановка запуска"); time.sleep(0.5)
           return "artificial_stoppage"
        #except: print("[start] неизвестная ошибка"), time.sleep(3)
         
         time.sleep(1)
-        #os.system('cls')
+        #os.system(parameters['clearOutput'])
         return "completed"
     if de == '1': 
       _start = start()
       print(_start), time.sleep(0.5)
-      input()
+      input("< ")
     elif de == '2': return "settings"
     elif de == '3': return "sessions"
     elif de == ' ': return "exit"
 
 
 def settings() :
-      while True:
+    while True:
+        #os.system(parameters['clearOutput'])
         print("╭─────────────────── ╭────────────╮"), 
         print("│  Sahur System [1]  │  v - 1.2.  │"), 
         print("╰────────────────╮ ──╯ ────────── │"), 
@@ -187,12 +196,12 @@ def settings() :
 
 def configurations() :
   while True:
-    #try:
+    try:
             proga = str(input('Номер проги: '))
             if proga == " ": return "return_to_settings"
             proga1 = 'pr_' + proga
             if proga1 in programs:
-              os.system('cls')
+              os.system(parameters['clearOutput'])
               while True:
                 if proga1 == 'pr_1': b = [Fore.YELLOW+b_m[0]+Fore.GREEN, b_m[1], b_m[2], b_m[3], b_m[4]]
                 if proga1 == 'pr_2': b = [b_m[0], Fore.YELLOW+b_m[1]+Fore.GREEN, b_m[2], b_m[3], b_m[4]]
@@ -200,22 +209,25 @@ def configurations() :
                 if proga1 == 'pr_4': b = [b_m[0], b_m[1], b_m[2], Fore.YELLOW+b_m[3]+Fore.GREEN, b_m[4]]
                 if proga1 == 'pr_5': b = [b_m[0], b_m[1], b_m[2], b_m[3], Fore.YELLOW+b_m[4]+Fore.GREEN]
 
-                print("╭─────────────────── ╭────────────╮"), 
-                print("│  Sahur System [1]  │  v - 1.2.  │"), 
-                print("╰────────────────╮ ──╯ ────────── │"), 
-                print("│  конфигурация  │ ", b[0] +     "│"),# ДАТЬ ВЫБОР: ОСТАВЛЯТЬ СТАРЫЙ ПУТЬ ИЛИ НЕТ
-                print("│ ────────────── │ ", b[1] +     "│"),  
-                print("│ [1] - Изменить │ ", b[2] +     "│"),  
-                print("│ [2] - Удалить  │ ", b[3] +     "│"), # ПОКАЗЫВАТЬ ДЕРИКТОИЮ И ПАРАМТР
-                print("│ [3] - Назад    │ ", b[4] +     "│"),  
-                print("╰─────────────── ╰────────────────╯"), time.sleep(0.5)  
+                print("╭─────────────────── ╭────────────╮"); 
+                print("│  Sahur System [1]  │  v - 1.2.  │"); 
+                print("╰────────────────╮ ──╯ ────────── │"); 
+                print("│  конфигурация  │ ", b[0] +     "│");# ДАТЬ ВЫБОР: ОСТАВЛЯТЬ СТАРЫЙ ПУТЬ ИЛИ НЕТ
+                print("│ ────────────── │ ", b[1] +     "│");  
+                print("│ [1] - Изменить │ ", b[2] +     "│");  
+                print("│ [2] - Удалить  │ ", b[3] +     "│"); # ПОКАЗЫВАТЬ ДЕРИКТОИЮ И ПАРАМТР
+                print("│ [3] - Назад    │ ", b[4] +     "│");  
+                print("╰─────────────── ╰────────────────╯"); time.sleep(0.5)  
                 de = input('>> ')
                 if de == '1': 
                   print(programs[proga1])
-                  print('Доступные функции:\n [1] - os.startfile (запуск файла)\n [2] - pyperclip.copy (копирование в буфер)\n [3] - webbrowser.open (открытие ссылки)'), time.sleep(0.5)
+                  print('Доступные функции:\n [1] - os.startfile (запуск файла)\n [2] - pyperclip.copy (копирование в буфер)\n [3] - webbrowser.open (открытие ссылки)')
                   de = input('>> ') # ДОБАВИТЬ ФУНКЦИЮ ОТКРЫТИЯ ССЫЛОК 
                   if de == '1': 
-                    par = 'os.startfile'
+                   print('выберете вариант запуска:\n[1] - subprocess.Popen\n[2] - subprocess.run (пока нету)\n[3] - os.startfile (пока нету)')
+                   de = input('>> ') 
+                   if de == '1':
+                    par = 'subprocess.Popen'
                     print("[1] - Оставить старое")
                     name = str(input("Имя (не более 10 символов): "))
                     if name == '1': name = programs[proga1]['name']
@@ -225,35 +237,37 @@ def configurations() :
                       print("[1] - Оставить старый")
                       dir = input("Путь: ") 
                       if dir == '1': dir = programs[proga1]['dir']
-                      dir_1 = dir.replace("\\", "/")
-                      print(dir_1), time.sleep(3)
+                      #dir_1 = dir.replace("\\", "/")
+                      #print(dir_1), time.sleep(3)
                       try: # проверка процесса 
-                        exec('os.startfile('+'"'+dir_1+'"'+')'), time.sleep(3) 
+                          print(dir); time.sleep(1)
+                          dir = dir.replace('\\', '/')
+                          print(dir); time.sleep(1)
+                          proc = subprocess.Popen([dir])
+                          time.sleep(2)
                       except FileNotFoundError: 
-                        print('Директория не найдена'), time.sleep(1)
+                        print('Ошибка: Директория не найдена'); time.sleep(2)
                         continue
+                      except PermissionError: 
+                        print("Ошибка: Отказано в доступе"); time.sleep(2)
                       #except: print('неизвестная ошибка')
-                      else:
+                      else: # остановка тестового процесса
                         #try:
-                          v = str("taskkill /f /im " + dir_1)# НА ЗАКРЫТИИ НЕ ИСПОЛЬЗОВАТЬ РАЗВЁРНУТЫЫЙ ПУТЬ 
-                          os.system(v)
-                          time.sleep(1)
-                        #except: 
-                          #print("кажется, вы ввели неправильный путь к файлу. (папки не поддерживаются)"), time.sleep(2)
-                          #continue
-                        #else: 
+                          print("попытка остановки тестового процесса"); time.sleep(0.5)
+                          proc.terminate()
+                          #os.system(f"taskkill /F /T /PID {proc.pid}") # резерв
                           while True:
                             try: delay = int(input("задержка: "))
-                            except ValueError: print("цифры вводи нормальные да"), time.sleep(1)
+                            except ValueError: print("цифры вводи нормальные да"); time.sleep(1)
                             else: break
                           print("Сохранено успешно")
                           programs[proga1]['par'] = par
                           programs[proga1]['name'] = name
-                          programs[proga1]['dir'] = dir_1
+                          programs[proga1]['dir'] = dir
                           programs[proga1]['delay'] = delay
                           update_write = write()
                           print(programs), time.sleep(1)
-                          menu()
+                          return "return_to_menu"
                     else: 
                       print('имя содержит более 10 символов!'), time.sleep(1)
                       continue
@@ -275,10 +289,11 @@ def configurations() :
                       programs[proga1]['par'] = par
                       programs[proga1]['name'] = name
                       programs[proga1]['dir'] = text
+                      programs[proga1]['delay'] = delay
                       update_write = write()
                       print('сохранено успешно')
                       print(programs), time.sleep(1)
-                      menu()
+                      return "return_to_menu"
                     else: 
                       print('имя содержит более 10 символов!'), time.sleep(1)
                       continue
@@ -305,10 +320,11 @@ def configurations() :
                           programs[proga1]['par'] = par
                           programs[proga1]['name'] = name
                           programs[proga1]['dir'] = url
+                          programs[proga1]['delay'] = delay
                           update_write = write()
                           print('сохранено успешно'), time.sleep(0.5)
                           print(programs), time.sleep(0.5)
-                          break
+                          return "return_to_menu"
                         else: continue
                   
                   else: 
@@ -334,6 +350,7 @@ def configurations() :
             else: 
               print("нету таких"), time.sleep(1)       
               continue
+    except KeyboardInterrupt: break 
     #except: print("[configs] неизвестная ошибка")
 
 def sessions() :
@@ -356,7 +373,8 @@ def sessions() :
 # общий алгоритм процессов
 def main():
   while True:
-    #try:
+    try:
+      _crossPlatform = crossPlatform()
       _menu = menu()
       if _menu == "settings": 
           while True:
@@ -365,6 +383,7 @@ def main():
               _configs = configurations()
               if _configs == None: None
               elif _configs == "return_to_settings": continue
+              elif _configs == 'return_to_menu': break
             elif _settings == "return_to_menu": break
 
       elif _menu == "sessions":
@@ -375,6 +394,7 @@ def main():
       elif _menu == "exit":
           print("До свидания!"), time.sleep(0.3)
           safe_exit = _exit()
+    except KeyboardInterrupt: break 
     #except: print("[main] неизвестная ошибка")
 
 _main = main()

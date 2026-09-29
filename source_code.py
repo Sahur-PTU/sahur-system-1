@@ -30,6 +30,7 @@ def crossPlatform():
   if sys.platform == "win32": parameters = {'system': "win32", 'clearOutput': "cls", 'runFile': "os.startfile"}
   if sys.platform == "darwin": parameters = {'system': "drawin", 'clearOutput':"clear",'runFile': "subprocess.run"}
   if sys.platform == "xdg-open": parameters = {'system': "xdg-open", 'clearOutput':"clear", 'runFile': "subprocess.run"}
+  if sys.platform == "Linux": parameters = {'system': "xdg-open", 'clearOutput':"clear", 'runFile': "subprocess.run"}
 
 programs = {
  'pr_1' : {'num':'1', 'par': 'none', 'name':'none', 'dir': 'none', 'delay':1},
@@ -67,31 +68,35 @@ def _exit() :
   update_write = write()
   print(Fore.BLUE, " [ℹ]-System : stop ", Style.RESET_ALL); time.sleep(0.5)
   exit()
-  
-"""
-print(Fore.GREEN+"sahur system - [1] / v-1.2 / 26.08.2026"+Style.RESET_ALL), time.sleep(1)
-print(Fore.BLUE,"[1]-System : Запуск \n"), time.sleep(0.5)
-print(" [2]-System : Проверка систем (1) "), time.sleep(0.3)
-print('  расположение:', os.getcwd()), time.sleep(0.3)
-print(" [3]-System : Проверка систем (2) \n"), time.sleep(1)
-os.system('cls') 
-"""
-#print(Fore.MAGENTA, '')
-_read = read()
-if len(programs['sessions']) > 0: last_log = list(programs['sessions'].values())[-1]
-else: last_log = "none"
-print("последняя сессия :", last_log)
-programs['sessions'][str(len(programs['sessions'])+1)] = str(datetime.datetime.now())[:-10]
-update_write = write()
-print("текущая сессия   :", str(datetime.datetime.now())[:-10]); time.sleep(0.5)
-#print(Fore.GREEN, '')
-print(len(programs))
 
-#os.system(parameters['clearOutput'])
+def information_notification() : 
+  """
+  print(Fore.GREEN+"sahur system - [1] / v-1.2 / 26.08.2026"+Style.RESET_ALL), time.sleep(1)
+  print(Fore.BLUE,"[1]-System : Запуск \n"), time.sleep(0.5)
+  print(" [2]-System : Проверка систем (1) "), time.sleep(0.3)
+  print('  расположение:', os.getcwd()), time.sleep(0.3)
+  print(" [3]-System : Проверка систем (2) \n"), time.sleep(1)
+  os.system('cls') 
+  """
+  #print(Fore.MAGENTA, '')
+  _read = read()
+  if len(programs['sessions']) > 0: last_log = list(programs['sessions'].values())[-1]
+  else: last_log = "none"
+  print("последняя сессия :", last_log)
+  programs['sessions'][str(len(programs['sessions'])+1)] = str(datetime.datetime.now())[:-10]
+  update_write = write()
+  print("текущая сессия   :", str(datetime.datetime.now())[:-10]); time.sleep(0.5)
+  #print(Fore.GREEN, '')
+
+  print('main_delay:', programs['main_delay'])
+  print("Добро пожаловать!"); time.sleep(1)
+
+  #os.system(parameters['clearOutput'])
+
 
 def calculation_names():
     get_data = read()
-    # посчёт символов
+     # посчёт символов
     a1 = len(programs['pr_1']['num']+'. '+programs['pr_1']['name'])
     a2 = len(programs['pr_2']['num']+'. '+programs['pr_2']['name'])
     a3 = len(programs['pr_3']['num']+'. '+programs['pr_3']['name'])
@@ -102,7 +107,7 @@ def calculation_names():
     a8 = len(programs['pr_8']['num']+'. '+programs['pr_8']['name'])
     a9 = len(programs['pr_9']['num']+'. '+programs['pr_9']['name'])
     a10 = len(programs['pr_10']['num']+'. '+programs['pr_10']['name'])
-    # сборка имён
+     # сборка имён
     b_m[0] = programs['pr_1']['num']+'. '+programs['pr_1']['name']+' ' * (14 - a1)
     b_m[1] = programs['pr_2']['num']+'. '+programs['pr_2']['name']+' ' * (14 - a2)
     b_m[2] = programs['pr_3']['num']+'. '+programs['pr_3']['name']+' ' * (14 - a3)
@@ -114,9 +119,8 @@ def calculation_names():
     b_m[8] = programs['pr_9']['num']+'. '+programs['pr_9']['name']+' ' * (14 - a9)
     b_m[9] = programs['pr_10']['num']+'. '+programs['pr_10']['name']+' ' * (14 - a10)
 
-print('main_delay:', programs['main_delay'])
-print("Добро пожаловать!"); time.sleep(1)
-def menu():
+
+def start_menu():
   while True:
     #os.system(parameters['clearOutput'])
     get_names = calculation_names()
@@ -142,7 +146,7 @@ def menu():
               print(f'запуск ({proc}) небудем это хапускать'); time.sleep(programs[f'pr_{proc}']['delay'])
             else: 
               print(f"запуск ({proc})"); time.sleep(programs[f'pr_{proc}']['delay'])
-              exec(programs[f'pr_{proc}']['par']+'(["'+programs[f'pr_{proc}']['dir']+'"])')
+              exec(programs['pr_'+proc]['dir'])
 
         except FileNotFoundError: print('Один из файлов не был найден')
         except KeyboardInterrupt: 
@@ -219,6 +223,7 @@ def configurations() :
                 n = [5, 6, 7, 8, 9]; is_v = "Вверх   "
 
               os.system(parameters['clearOutput'])
+
               while True:
                 get_names = calculation_names()
                 
@@ -238,7 +243,7 @@ def configurations() :
                 if de == '1': 
                   print(programs[proga1])
                   print('Доступные функции:\n [1] - os.startfile (запуск файла)\n [2] - pyperclip.copy (копирование в буфер)\n [3] - webbrowser.open (открытие ссылки)')
-                  de = input('>> ') # ДОБАВИТЬ ФУНКЦИЮ ОТКРЫТИЯ ССЫЛОК 
+                  de = input('>> ')
                   if de == '1': 
                    print('выберете вариант запуска:\n[1] - subprocess.Popen\n[2] - subprocess.run (пока нету)\n[3] - os.startfile (пока нету)')
                    de = input('>> ') 
@@ -279,7 +284,7 @@ def configurations() :
                           print("Сохранено успешно")
                           programs[proga1]['par'] = par
                           programs[proga1]['name'] = name
-                          programs[proga1]['dir'] = dir
+                          programs[proga1]['dir'] = f"{par}(['{dir}'])"
                           programs[proga1]['delay'] = delay
                           update_write = write()
                           print(programs), time.sleep(1)
@@ -304,7 +309,7 @@ def configurations() :
                         else: break
                       programs[proga1]['par'] = par
                       programs[proga1]['name'] = name
-                      programs[proga1]['dir'] = text
+                      programs[proga1]['dir'] = f"{par}('{text}')"
                       programs[proga1]['delay'] = delay
                       update_write = write()
                       print('сохранено успешно')
@@ -335,7 +340,7 @@ def configurations() :
                             else: break
                           programs[proga1]['par'] = par
                           programs[proga1]['name'] = name
-                          programs[proga1]['dir'] = url
+                          programs[proga1]['dir'] = f"{par}('{url}')"
                           programs[proga1]['delay'] = delay
                           update_write = write()
                           print('сохранено успешно'); time.sleep(0.5)
@@ -356,7 +361,7 @@ def configurations() :
                     programs[proga1]['par'] = 'none'
                     programs[proga1]['name'] = 'none'
                     programs[proga1]['dir'] = 'none'
-                    programs[proga1]['delay'] = 1
+                    programs[proga1]['delay'] = 0
                     update_write = write()
                     print(programs); time.sleep(1)
                     continue
@@ -365,10 +370,9 @@ def configurations() :
                 elif de == '3': 
                   if is_v != "Вверх   ":
                       number_menu = 2; n = [5, 6, 7, 8, 9]; is_v = "Вверх   "
-                      continue
                   else: 
                       number_menu = 1; n = [0, 1, 2, 3, 4]; is_v = "Вниз    "
-                      continue
+                  continue
                 
                 elif de == 'exit' or de == ' ': return "return_to_settings"
                 else: continue
@@ -398,12 +402,13 @@ def sessions() :
 
 
 # общий алгоритм процессов
-def main():
+def main() :
+  # get_start_info_notf = information_notification()
   while True:
     try:
       _crossPlatform = crossPlatform()
-      _menu = menu()
-      if _menu == "settings": 
+      _start_menu = start_menu()
+      if _start_menu == "settings": 
           while True:
             _settings = settings()
             if _settings == "configs":
@@ -413,12 +418,12 @@ def main():
               elif _configs == 'return_to_menu': break
             elif _settings == "return_to_menu": break
 
-      elif _menu == "sessions":
+      elif _start_menu == "sessions":
             _sessions = sessions()
             if _sessions == "completed": continue
             elif _sessions == "return_to_menu": continue 
 
-      elif _menu == "exit":
+      elif _start_menu == "exit":
           print("До свидания!"); time.sleep(0.3)
           safe_exit = _exit()
     except KeyboardInterrupt: break 

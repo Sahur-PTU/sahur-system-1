@@ -122,7 +122,7 @@ def calculation_names():
 
 def start_menu():
   while True:
-    #os.system(parameters['clearOutput'])
+    os.system(parameters['clearOutput'])
     get_names = calculation_names()
     # основное меню
     print("╭─────────────────── ╭────────────╮"); time.sleep(0.05)
@@ -140,23 +140,26 @@ def start_menu():
         try:
           print('Запуск'); time.sleep(1)
           os.system(parameters['clearOutput'])
-          for proc in range(len(programs)-2):
+          for proc in range(10):
             proc = str(proc + 1)
+            nolik = ""; 
+            if len(programs[f'pr_{proc}']['num']) < 2 : nolik = "0"
             if programs[f'pr_{proc}']['name'] == 'none':
-              print(f'запуск ({proc}) небудем это хапускать'); time.sleep(programs[f'pr_{proc}']['delay'])
+              print(f'запуск ({nolik}{proc}) | не будем это хапускать'); time.sleep(programs[f'pr_{proc}']['delay'])
             else: 
-              print(f"запуск ({proc})"); time.sleep(programs[f'pr_{proc}']['delay'])
+              print(f"запуск ({nolik}{proc}) | успешно"); time.sleep(programs[f'pr_{proc}']['delay'])
               exec(programs['pr_'+proc]['dir'])
+            time.sleep(programs['delay'])
 
         except FileNotFoundError: print('Один из файлов не был найден')
         except KeyboardInterrupt: 
-          print("Искусcтвенная остановка запуска"); time.sleep(0.5)
+          print("\033[31m Искусcтвенная остановка запуска \033[0m"); time.sleep(0.5)
           return "artificial_stoppage"
        #except: print("[start] неизвестная ошибка"), time.sleep(3)
         
         time.sleep(1)
         #os.system(parameters['clearOutput'])
-        return "completed"
+        return "\033[32m completed \033[0m"
     
     if de == '1': 
       _start = start()
@@ -165,7 +168,7 @@ def start_menu():
 
     elif de == '2': return "settings"
     elif de == '3': return "sessions"
-    elif de == ' ': return "exit"
+    elif de == ' ' or de == 'exit': return "exit"
 
 
 def settings() :
@@ -173,7 +176,7 @@ def settings() :
     number_menu = 1
     is_v = "Вниз    "
     while True:
-        #os.system(parameters['clearOutput'])
+        os.system(parameters['clearOutput'])
         n = [0, 1, 2, 3, 4]
         if number_menu == 2: n = [5, 6, 7, 8, 9]
         print("╭─────────────────── ╭────────────╮"); 
@@ -182,12 +185,12 @@ def settings() :
         print("│   настройки    │ ", b_m[n[0]] +"│"); 
         print("│ ────────────── │ ", b_m[n[1]] +"│"); 
         print("│ [1] - Задержка │ ", b_m[n[2]] +"│"); 
-        print("│ [2] - Конфиги  │ ", b_m[n[3]] +"│"); 
+        print("│ [2] - Процессы │ ", b_m[n[3]] +"│"); 
         print("│ [3] - "+is_v+" │ ", b_m[n[4]] +"│"); 
         print("╰─────────────── ╰────────────────╯"); time.sleep(0.5) 
         de = input('>> ')
         if de == '1':
-          print("Задайте скорость задержки при запуске")
+          print("Задайте общее время задержки при запуске")
           try: delay = int(input(" > "))
           except ValueError: 
             print("цифры вводи нормальные да"); time.sleep(1)
@@ -200,13 +203,10 @@ def settings() :
         elif de == '2': return "configs"
         elif de == '3': 
           if is_v != "Вверх   ":
-            number_menu = 2
-            is_v = "Вверх   "
-            continue
+            number_menu = 2; is_v = "Вверх   "
           else: 
-            number_menu = 1
-            is_v = "Вниз    "
-            continue
+            number_menu = 1; is_v = "Вниз    "
+          continue
         elif de == 'exit' or de == ' ': return "return_to_menu"
         else: continue
 
@@ -215,16 +215,15 @@ def configurations() :
     is_v = "Вниз    "
     n = [0, 1, 2, 3, 4]
     try:
-            proga = input('Номер проги: ')
-            if proga == " ": return "return_to_settings"
-            proga1 = 'pr_' + proga
-            if proga1 in programs:
-              if int(proga) in [5, 6, 7, 8, 9]:
+          proga = input('Номер проги: ')
+          if proga == " ": return "return_to_settings"
+          proga1 = 'pr_' + proga
+          if proga1 in programs:
+              if int(proga) in [5, 6, 7, 8, 9, 10]:
                 n = [5, 6, 7, 8, 9]; is_v = "Вверх   "
 
-              os.system(parameters['clearOutput'])
-
               while True:
+                os.system(parameters['clearOutput'])
                 get_names = calculation_names()
                 
                 b = b_m
@@ -242,18 +241,18 @@ def configurations() :
                 de = input('>> ')
                 if de == '1': 
                   print(programs[proga1])
-                  print('Доступные функции:\n [1] - os.startfile (запуск файла)\n [2] - pyperclip.copy (копирование в буфер)\n [3] - webbrowser.open (открытие ссылки)')
+                  print('Доступные функции:\n [1] - запуск файла\n [2] - копирование в буфер обмена\n [3] - открытие ссылки в браузере')
                   de = input('>> ')
                   if de == '1': 
                    print('выберете вариант запуска:\n[1] - subprocess.Popen\n[2] - subprocess.run (пока нету)\n[3] - os.startfile (пока нету)')
-                   de = input('>> ') 
+                   de = input('>> ')
                    if de == '1':
                     par = 'subprocess.Popen'
                     print("[1] - Оставить старое")
                     name = str(input("Имя (не более 10 символов): "))
                     if name == '1': name = programs[proga1]['name']
                     if name == ' ': continue
-                    if len(name) < 10:
+                    if len(name) <= 10:
                       print('поддерживается только запуск файлов, папки не запустим.')
                       print("[1] - Оставить старый")
                       dir = input("Путь: ") 
@@ -272,14 +271,16 @@ def configurations() :
                       except PermissionError: 
                         print("Ошибка: Отказано в доступе"); time.sleep(2)
                       #except: print('неизвестная ошибка')
-                      else: # остановка тестового процесса
+                      else: # остановка тестового запуска процесса
                         #try:
                           print("попытка остановки тестового процесса"); time.sleep(0.5)
                           proc.terminate()
-                          #os.system(f"taskkill /F /T /PID {proc.pid}") # резерв
+                          #os.system(f"taskkill /F /T /PID {proc.pid}") # резерв. закрывает все дочерние процессы, но только для винды
                           while True:
                             try: delay = int(input("задержка: "))
-                            except ValueError: print("цифры вводи нормальные да"); time.sleep(1)
+                            except ValueError: 
+                              print("цифры вводи нормальные да"); time.sleep(1)
+                              continue
                             else: break
                           print("Сохранено успешно")
                           programs[proga1]['par'] = par
@@ -299,7 +300,7 @@ def configurations() :
                     name = str(input("Имя (не более 10 символов): "))
                     if name == '1': name = programs[proga1]['name']
                     if name == ' ': continue
-                    if len(name) < 10:
+                    if len(name) <= 10:
                       print("[1] - Оставить старый")
                       text = str(input("Текст: "))
                       if text == '1': text = programs[proga1]['dir']
@@ -325,12 +326,12 @@ def configurations() :
                       name = str(input("Имя (не более 10 символов): "))
                       if name == '1': name = programs[proga1]['name']
                       if name == ' ': break
-                      if len(name) < 10: 
+                      if len(name) <= 10: 
                         print("[1] - Оставить старую")
                         url = input("Ссылка: ")
                         if url == '1': url = programs[proga1]['dir']
-                        print("тест"); time.sleep(0.5)
-                        webbrowser.open_new_tab(url); time.sleep(2)
+                        print("тестовый запуск"); time.sleep(0.5)
+                        webbrowser.open_new_tab(url); time.sleep(1)
                         print("[1] - Работает, сохранить\n[2] - Не работает, изменить адрес")
                         pr = input(">> ")
                         if pr == "1": 
@@ -347,6 +348,9 @@ def configurations() :
                           print(programs); time.sleep(0.5)
                           return "return_to_menu"
                         else: continue
+                      else: 
+                        print('имя содержит более 10 символов!'); time.sleep(1)
+                        continue
                   
                   else: 
                     print("нормально вводи да"); time.sleep(1)
@@ -354,8 +358,7 @@ def configurations() :
             
                 elif de == '2':
                   print("Точно дэлете?")
-                  print("[1] - Да")
-                  print("[2] - Не")
+                  print("[1] - Да \n[2] - Не")
                   de = input('>> ')
                   if de == '1':
                     programs[proga1]['par'] = 'none'
@@ -376,7 +379,7 @@ def configurations() :
                 
                 elif de == 'exit' or de == ' ': return "return_to_settings"
                 else: continue
-            else: 
+          else: 
               print("нету таких"); time.sleep(1)       
               continue
     except KeyboardInterrupt: break 

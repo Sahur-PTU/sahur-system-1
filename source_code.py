@@ -71,7 +71,7 @@ def safe_exit() :
 
 def information_notification() : 
 
-  print(Fore.GREEN+"sahur system - [1] / v-1.2 / 26.08.2026"+Fore.RESET), time.sleep(1)
+  print(Fore.GREEN+"sahur system - [1] / v-1.2 / 15.10.2026"+Fore.RESET); time.sleep(1)
   print(Fore.BLUE,"[1]-System : Запуск \n"), time.sleep(0.5)
   print(" [2]-System : Проверка систем (1) "), time.sleep(0.3)
   print('  расположение:', os.getcwd()), time.sleep(0.3)
@@ -275,7 +275,7 @@ def configurations() :
                           proc.terminate()
                           #os.system(f"taskkill /F /T /PID {proc.pid}") # резерв. закрывает все дочерние процессы, но только для винды
                           while True:
-                            try: delay = int(input("задержка: "))
+                            try: delay = float(input("задержка: "))
                             except ValueError: 
                               print("цифры вводи нормальные да"); time.sleep(1)
                               continue
@@ -303,7 +303,7 @@ def configurations() :
                       text = str(input("Текст: "))
                       if text == '1': text = programs[proga1]['dir']
                       while True:
-                        try: delay = int(input("задержка: "))
+                        try: delay = float(input("задержка: "))
                         except ValueError: print("цифры вводи нормальные да"); time.sleep(1)
                         else: break
                       programs[proga1]['par'] = par
@@ -334,7 +334,7 @@ def configurations() :
                         pr = input(">> ")
                         if pr == "1": 
                           while True:
-                            try: delay = int(input("задержка: "))
+                            try: delay = float(input("задержка: "))
                             except ValueError: print("цифры вводи нормальные да"); time.sleep(1)
                             else: break
                           programs[proga1]['par'] = par

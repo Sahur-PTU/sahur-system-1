@@ -149,7 +149,7 @@ def start_menu():
             else: 
               print(f"запуск ({nolik}{proc}) | успешно"); time.sleep(programs[f'pr_{proc}']['delay'])
               exec(programs['pr_'+proc]['dir'])
-            time.sleep(programs['delay'])
+            time.sleep(programs['main_delay'])
 
         except FileNotFoundError: print('Один из файлов не был найден')
         except KeyboardInterrupt: 

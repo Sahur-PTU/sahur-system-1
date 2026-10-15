@@ -1,4 +1,4 @@
-# sahur system - [1] / v-1.1.5 / 07.10.2026
+# sahur system - [1] / v-1.2 / 09.10.2026
 
 #    \____
 #   sa\____\
@@ -17,9 +17,9 @@ from colorama import init, Fore, Back, Style
 
 
 init()
-#os.system('mode con: cols=60 lines=17')
+os.system('mode con: cols=45 lines=12')
 
-GENERAL_COLOR = Fore.WHITE
+GENERAL_COLOR = Fore.GREEN
 HIGHLIGHT_COLOR = Fore.YELLOW
 RESET_COLOR = Fore.RESET
 RESET_ALL = Style.RESET_ALL
@@ -28,9 +28,9 @@ parameters = {'system':"none", 'clearOutput':'none','runFile':'none'}
 def crossPlatform():
   global parameters
   if sys.platform == "win32": parameters = {'system': "win32", 'clearOutput': "cls", 'runFile': "os.startfile"}
-  if sys.platform == "darwin": parameters = {'system': "drawin", 'clearOutput':"clear",'runFile': "subprocess.run"}
-  if sys.platform == "xdg-open": parameters = {'system': "xdg-open", 'clearOutput':"clear", 'runFile': "subprocess.run"}
-  if sys.platform == "Linux": parameters = {'system': "xdg-open", 'clearOutput':"clear", 'runFile': "subprocess.run"}
+  if sys.platform == "darwin": parameters = {'system': "drawin", 'clearOutput':"clear",'runFile': "subprocess.Popen"}
+  if sys.platform == "xdg-open": parameters = {'system': "xdg-open", 'clearOutput':"clear", 'runFile': "subprocess.Popen"}
+  if sys.platform == "linux": parameters = {'system': "linux", 'clearOutput':"clear", 'runFile': "subprocess.Popen"}
 
 programs = {
  'pr_1' : {'num':'1', 'par': 'none', 'name':'none', 'dir': 'none', 'delay':1},
@@ -43,7 +43,7 @@ programs = {
  'pr_8' : {'num':'8', 'par': 'none', 'name':'none', 'dir': 'none', 'delay':1},
  'pr_9' : {'num':'9', 'par': 'none', 'name':'none', 'dir': 'none', 'delay':1},
  'pr_10' : {'num':'10', 'par': 'none', 'name':'none', 'dir': 'none', 'delay':1},
- 'main_delay' : 1,
+ 'main_delay' : 0,
  'sessions' : {}
 }
 
@@ -51,34 +51,34 @@ programs = {
 b_m = [None, None, None, None, None, None, None, None, None, None] 
 
 def write() : 
-  with open('data/data.json', 'w', encoding='utf-8') as file:  
+  with open('data.json', 'w', encoding='utf-8') as file:  
     json.dump(programs, file, ensure_ascii=False, indent=2)
 
 def read() :
   try: 
-    with open('data/data.json', 'r', encoding='utf-8') as file:
+    with open('data.json', 'r', encoding='utf-8') as file:
       new_data = json.load(file)
       programs.clear(); programs.update(new_data)
   except FileNotFoundError: 
     print('файл "data.json" не найден'); time.sleep(1)
     _write = write(); print("создан в локальной папке"); time.sleep(1)
 
-def _exit() :
+def safe_exit() :
   print("закругляемся")
   update_write = write()
-  print(Fore.BLUE, " [ℹ]-System : stop ", Style.RESET_ALL); time.sleep(0.5)
-  exit()
+  print(Fore.BLUE, " [ℹ]-System : stop ", Fore.RESET); time.sleep(0.5)
+  sys.exit()
 
 def information_notification() : 
-  """
-  print(Fore.GREEN+"sahur system - [1] / v-1.2 / 26.08.2026"+Style.RESET_ALL), time.sleep(1)
+
+  print(Fore.GREEN+"sahur system - [1] / v-1.2 / 26.08.2026"+Fore.RESET), time.sleep(1)
   print(Fore.BLUE,"[1]-System : Запуск \n"), time.sleep(0.5)
   print(" [2]-System : Проверка систем (1) "), time.sleep(0.3)
   print('  расположение:', os.getcwd()), time.sleep(0.3)
-  print(" [3]-System : Проверка систем (2) \n"), time.sleep(1)
-  os.system('cls') 
-  """
-  #print(Fore.MAGENTA, '')
+  print(" [3]-System : Проверка систем (2) \n"), time.sleep(0.5)
+  os.system(parameters['clearOutput'])
+
+  print(Fore.MAGENTA, '')
   _read = read()
   if len(programs['sessions']) > 0: last_log = list(programs['sessions'].values())[-1]
   else: last_log = "none"
@@ -86,12 +86,11 @@ def information_notification() :
   programs['sessions'][str(len(programs['sessions'])+1)] = str(datetime.datetime.now())[:-10]
   update_write = write()
   print("текущая сессия   :", str(datetime.datetime.now())[:-10]); time.sleep(0.5)
-  #print(Fore.GREEN, '')
+  print(Fore.GREEN, '')
 
-  print('main_delay:', programs['main_delay'])
   print("Добро пожаловать!"); time.sleep(1)
 
-  #os.system(parameters['clearOutput'])
+  os.system(parameters['clearOutput'])
 
 
 def calculation_names():
@@ -125,16 +124,17 @@ def start_menu():
     os.system(parameters['clearOutput'])
     get_names = calculation_names()
     # основное меню
-    print("╭─────────────────── ╭────────────╮"); time.sleep(0.05)
+    print(GENERAL_COLOR+
+          "╭─────────────────── ╭────────────╮"); time.sleep(0.05)
     print("│  Sahur System [1]  │  v - 1.2.  │"); time.sleep(0.05)
     print("╰────────────────╮ ──╯ ────────── │"); time.sleep(0.05)
     print("│  главное меню  │ ", b_m[0] +   "│"); time.sleep(0.05)
     print("│ ────────────── │ ", b_m[1] +   "│"); time.sleep(0.05)
     print("│ [1] - Старт    │ ", b_m[2] +   "│"); time.sleep(0.05)
-    print("│ [2] - Настр    │ ", b_m[3] +   "│"); time.sleep(0.05)
+    print("│ [2] - Настрой  │ ", b_m[3] +   "│"); time.sleep(0.05)
     print("│ [3] - Сессии   │ ", b_m[4] +   "│"); time.sleep(0.05)
     print("╰─────────────── ╰────────────────╯"); time.sleep(0.5) 
-    de = input('>> ')
+    de = input(' >> ')
 
     def start():
         try:
@@ -157,9 +157,8 @@ def start_menu():
           return "artificial_stoppage"
        #except: print("[start] неизвестная ошибка"), time.sleep(3)
         
-        time.sleep(1)
         #os.system(parameters['clearOutput'])
-        return "\033[32m completed \033[0m"
+        return "\033[33m completed \033[0m"
     
     if de == '1': 
       _start = start()
@@ -173,8 +172,7 @@ def start_menu():
 
 def settings() :
     get_names = calculation_names()
-    number_menu = 1
-    is_v = "Вниз    "
+    number_menu = 1; is_v = "Вниз    "
     while True:
         os.system(parameters['clearOutput'])
         n = [0, 1, 2, 3, 4]
@@ -188,15 +186,15 @@ def settings() :
         print("│ [2] - Процессы │ ", b_m[n[3]] +"│"); 
         print("│ [3] - "+is_v+" │ ", b_m[n[4]] +"│"); 
         print("╰─────────────── ╰────────────────╯"); time.sleep(0.5) 
-        de = input('>> ')
+        de = input(' >> ')
         if de == '1':
           print("Задайте общее время задержки при запуске")
-          try: delay = int(input(" > "))
+          try: delay = float(input(" > "))
           except ValueError: 
             print("цифры вводи нормальные да"); time.sleep(1)
             continue
           else: 
-            programs['delay'] = delay
+            programs['main_delay'] = delay
             update_write = write()
             print("Сохранено успешно!"); time.sleep(1)
             continue
@@ -226,7 +224,7 @@ def configurations() :
                 os.system(parameters['clearOutput'])
                 get_names = calculation_names()
                 
-                b = b_m
+                b = list(b_m)
                 b[int(proga)-1] = HIGHLIGHT_COLOR+b_m[int(proga)-1]+GENERAL_COLOR
 
                 print("╭─────────────────── ╭────────────╮"); 
@@ -238,7 +236,7 @@ def configurations() :
                 print("│ [2] - Удалить  │ ", b[n[3]] +  "│"); 
                 print("│ [3] - "+is_v+" │ ", b[n[4]] +  "│");  
                 print("╰─────────────── ╰────────────────╯"); time.sleep(0.5)  
-                de = input('>> ')
+                de = input(' >> ')
                 if de == '1': 
                   print(programs[proga1])
                   print('Доступные функции:\n [1] - запуск файла\n [2] - копирование в буфер обмена\n [3] - открытие ссылки в браузере')
@@ -406,10 +404,10 @@ def sessions() :
 
 # общий алгоритм процессов
 def main() :
-  # get_start_info_notf = information_notification()
+  _crossPlatform = crossPlatform()
+  get_start_info_notf = information_notification()
   while True:
     try:
-      _crossPlatform = crossPlatform()
       _start_menu = start_menu()
       if _start_menu == "settings": 
           while True:
@@ -428,7 +426,7 @@ def main() :
 
       elif _start_menu == "exit":
           print("До свидания!"); time.sleep(0.3)
-          safe_exit = _exit()
+          _safe_exit = safe_exit()
     except KeyboardInterrupt: break 
     #except: print("[main] неизвестная ошибка")
 
